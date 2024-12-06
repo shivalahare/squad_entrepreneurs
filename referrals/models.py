@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from decimal import Decimal
+import uuid
 
 class ReferralProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -10,6 +11,11 @@ class ReferralProfile(models.Model):
     referred_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='referrals')
     total_earnings = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     
+    def save(self, *args, **kwargs):
+        if not self.referral_code:
+            self.referral_code = str(uuid.uuid4())[:8]
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.user.email}'s Referral Profile"
 

@@ -166,3 +166,4 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'shiva.lahare@gmail.com'
 EMAIL_HOST_PASSWORD = 'zfmw pwgp vcly ihvc'
 DEFAULT_FROM_EMAIL='shiva.lahare@gmail.com'
+

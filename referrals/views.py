@@ -6,10 +6,17 @@ from django.utils import timezone
 from datetime import timedelta
 from .models import ReferralProfile, ReferralEarning
 
+
+def generate_referral_link(user):
+    # Assuming the user has a UserProfile with a referral_code
+    return f"http://127.0.0.1:8000/accounts/signup/?ref={user.referralprofile.referral_code}"
+
 @login_required
 def referral_dashboard(request):
-    referral_profile = ReferralProfile.objects.get(user=request.user)
+    user = request.user
+    referral_profile = ReferralProfile.objects.get(user=user)
     
+    referral_link = generate_referral_link(request.user)
     # Get referral statistics
     total_referrals = ReferralProfile.objects.filter(referred_by=request.user).count()
     
@@ -38,6 +45,7 @@ def referral_dashboard(request):
         'monthly_earnings': monthly_earnings,
         'recent_earnings': recent_earnings,
         'referred_users': referred_users,
+        'referral_link': referral_link,
     }
     return render(request, 'referrals/dashboard.html', context)
 
