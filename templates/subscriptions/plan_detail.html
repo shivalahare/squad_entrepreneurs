@@ -4,20 +4,24 @@
 
 {% block content %}
 <div class="container">
-    <h1 class="text-center mb-4">Subscribe to {{ plan.name }}</h1>
+    <h1 class="text-center mb-4">Plan Detail Page</h1>
     
     <div class="row">
         <div class="col-md-6 offset-md-3">
+            <p><strong>Plan Name:</strong> {{ plan.name }}</p>
             <p><strong>Description:</strong> {{ plan.description }}</p>
             <p><strong>Price:</strong> ₹{{ plan.price }}</p>
             <p><strong>Duration:</strong> {{ plan.duration }} days</p>
-
-            <form method="post" class="mt-4">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-primary btn-block">Confirm Subscription</button>
-            </form>
-
+        </div>
+        <div class="col-md-6 offset-md-3">
+          {% if user.is_authenticated %}
+          <a href="{% url 'subscribe' plan.id %}" class="btn btn-lg btn-primary">Subscribe Now</a>
+          {% else %}
+          <a href="{% url 'account_signup' %}" class="btn btn-lg btn-outline-primary">Sign Up to Subscribe</a>
+          {% endif %}
+          <div>
             <a href="{% url 'subscription_list' %}" class="btn btn-secondary btn-block mt-3">Cancel</a>
+          </div>
         </div>
     </div>
 </div>

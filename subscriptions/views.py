@@ -6,8 +6,13 @@ from .models import Plan , Subscription
 from django.utils.timezone import now
 import uuid
 
-def plan_detail(request):
+def plan_detail(request,plan_id):
     """View to list all plans."""
+    plan = get_object_or_404(Plan, id=plan_id)
+    return render(request, 'subscriptions/plan_detail.html', {'plan': plan})
+
+def plan_details(request):
+    """View to list single plans."""
     plans = Plan.objects.all()
     return render(request, 'subscriptions/plans.html', {'plans': plans})
 
