@@ -32,11 +32,4 @@ class ReferralEarning(models.Model):
     
     def __str__(self):
         return f"{self.referrer.email} earned ${self.amount} from {self.referred_user.email}"
-
-@receiver(post_save, sender=User)
-def create_referral_profile(sender, instance, created, **kwargs):
-    """Create ReferralProfile when a new user is created"""
-    if created:
-        import uuid
-        referral_code = str(uuid.uuid4())[:8].upper()
-        ReferralProfile.objects.create(user=instance, referral_code=referral_code)
+    

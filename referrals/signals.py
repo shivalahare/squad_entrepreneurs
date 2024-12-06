@@ -1,28 +1,22 @@
-from django.db.models.signals import post_save
+from allauth.account.signals import user_signed_up
 from django.dispatch import receiver
-from django.contrib.auth import get_user_model
 from .models import ReferralProfile
 
-User = get_user_model()
-
-@receiver(post_save, sender=User)
-def create_referral_profile(sender, instance, created, **kwargs):
+@receiver(user_signed_up)
+def handle_referral_code_on_signup(request, user, **kwargs):
     """
-    Create a ReferralProfile for every new user and handle referral relationships
-    based on query parameters.
+    Handle referral code during the signup process.
     """
-    if created:  # Skip superusers # Only create the profile for newly created users
-        # Create a referral profile for the user
-        referral_profile = ReferralProfile.objects.get_or_create(user=instance)
-
-        # Handle referral logic from query parameters (if applicable)
-        request = kwargs.get('request')  # Django doesn't pass request in post_save
-        if request and request.GET.get('ref'):  # Check if ref code exists
-            referral_code = request.GET.get('ref')
-            try:
-                referrer_profile = ReferralProfile.objects.get(referral_code=referral_code)
-                user_profile = ReferralProfile.objects.get(user=request.user)
-                user_profile.referred_by = referrer_profile.user
-                user_profile.save()
-            except ReferralProfile.DoesNotExist:
-                pass  # If the referral code is invalid, do nothing
+    referral_code = request.GET.get('ref')  # Extract referral code from query parameters
+    if referral_code:
+        try:
+            # Find the referrer's ReferralProfile using the referral code
+            referrer_profile = ReferralProfile.objects.get(referral_code=referral_code)
+            
+            # Create or update the ReferralProfile for the signed-up user
+            referral_profile, created = ReferralProfile.objects.get_or_create(user=user)
+            referral_profile.referred_by = referrer_profile.user
+            referral_profile.save()
+        except ReferralProfile.DoesNotExist:
+            # If the referral code is invalid, do nothing
+            pass
