@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Referral Dashboard - SubscriptionPro{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1>Referral Dashboard</h1>
+        </div>
+    </div>
+
+    <!-- Referral Code Card -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Your Referral Code</h5>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" value="{{ referral_profile.referral_code }}" readonly>
+                <button class="btn btn-outline-primary" onclick="copyReferralCode()">Copy</button>
+            </div>
+            <p class="mb-0">Share this code with others and earn 0.1% of their purchases!</p>
+        </div>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h6 class="card-title">Total Referrals</h6>
+                    <h2 class="mb-0">{{ total_referrals }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h6 class="card-title">Monthly Earnings</h6>
+                    <h2 class="mb-0">${{ monthly_earnings }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h6 class="card-title">Total Earnings</h6>
+                    <h2 class="mb-0">${{ referral_profile.total_earnings }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Earnings -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Recent Earnings</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Referred User</th>
+                            <th>Purchase Amount</th>
+                            <th>Commission</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for earning in recent_earnings %}
+                        <tr>
+                            <td>{{ earning.created_at|date:"M d, Y" }}</td>
+                            <td>{{ earning.referred_user.email }}</td>
+                            <td>${{ earning.payment.amount }}</td>
+                            <td>${{ earning.amount }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">No earnings yet</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Referred Users -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Referred Users</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Joined Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for profile in referred_users %}
+                        <tr>
+                            <td>{{ profile.user.email }}</td>
+                            <td>{{ profile.user.date_joined|date:"M d, Y" }}</td>
+                            <td>
+                                <span class="badge bg-success">Active</span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center">No referred users yet</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function copyReferralCode() {
+    const codeInput = document.querySelector('input[readonly]');
+    codeInput.select();
+    document.execCommand('copy');
+    alert('Referral code copied to clipboard!');
+}
+</script>
+{% endblock %}

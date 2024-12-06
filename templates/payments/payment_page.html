@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Page{% endblock %}
+
+{% block content %}
+<div class="container text-center">
+    <h1>Complete Your Payment</h1>
+    <p class="lead"><strong>Plan: {{ subscription.plan.name }}</strong></p>
+    <p class="lead"><strong>Amount: ₹{{ subscription.plan.price }}</strong></p>
+    <p class="text-center mt-4">Scan the QR code with your UPI app to make the payment.</p>
+    <p>{{upi_id}}</p>
+    <!-- Display the QR code image -->
+    <div class="text-center">
+        <img src="data:image/png;base64,{{ qr_code_data }}" alt="QR Code" style="width: 300px; height: 300px;">
+    </div>
+
+    <!-- Form to submit the payment ID -->
+    <form method="post" class="mt-4">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="payment_id">Enter Payment ID:</label>
+            <input type="text" id="payment_id" name="payment_id" class="form-control col-md-6 mx-auto" placeholder="Enter the payment ID received after the payment" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block mt-3">Submit Payment ID</button>
+    </form>
+
+    <a href="{% url 'subscription_list' %}" class="btn btn-secondary btn-block mt-3">Cancel</a>
+</div>
+{% endblock %}

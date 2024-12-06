@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load allauth i18n %}
+{% block head_title %}
+    {% trans "Verify Your Email" %}
+{% endblock head_title %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card mt-5">
+                <div class="card-header text-center">
+                    <h2>{% trans "Email Verification Required" %}</h2>
+                </div>
+                <div class="card-body text-center">
+                    <p>
+                        {% trans "Thank you for signing up! To complete your registration, please verify your email address by clicking the link we’ve sent to your email." %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

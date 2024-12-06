@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Subscription Settings - SubscriptionPro{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1>Subscription Settings</h1>
+        </div>
+    </div>
+
+    {% for subscription in subscriptions %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">{{ subscription.plan.name }}</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Status:</strong> 
+                        <span class="badge bg-{{ subscription.status|yesno:'success,warning' }}">
+                            {{ subscription.status }}
+                        </span>
+                    </p>
+                    <p><strong>Start Date:</strong> {{ subscription.start_date|date }}</p>
+                    <p><strong>End Date:</strong> {{ subscription.end_date|date }}</p>
+                    <p><strong>Price:</strong> ${{ subscription.plan.price }}/{{ subscription.plan.duration_months }} months</p>
+                </div>
+                <div class="col-md-6">
+                    <h6>Features:</h6>
+                    <ul>
+                        {% for feature in subscription.plan.features %}
+                        <li>{{ feature }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            
+            {% if subscription.status == 'active' %}
+            <div class="mt-3">
+                <form method="post" action="{% url 'cancel_subscription' subscription.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger" 
+                            onclick="return confirm('Are you sure you want to cancel this subscription?')">
+                        Cancel Subscription
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="alert alert-info">
+        You don't have any subscriptions yet. <a href="{% url 'plans' %}">View our plans</a> to get started.
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

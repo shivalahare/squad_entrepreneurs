@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load allauth i18n %}
+{% block head_title %}
+    {% trans "Sign Out" %}
+{% endblock head_title %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card mt-5">
+                <div class="card-header text-center">
+                    <h2>{% trans "Sign Out" %}</h2>
+                </div>
+                <div class="card-body text-center">
+                    <p>
+                        {% trans "Are you sure you want to sign out?" %}
+                    </p>
+                    <form method="post" action="{% url 'account_logout' %}">
+                        {% csrf_token %}
+                        {{ redirect_field }}
+                        <div class="d-flex justify-content-around mt-4">
+                            <a href="{% url 'account_email' %}" class="btn btn-secondary">
+                                {% trans "Cancel" %}
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                {% trans "Sign Out" %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

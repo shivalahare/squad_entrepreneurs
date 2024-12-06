@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Subscriptions{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="mb-4">My Subscriptions</h1>
+        {% if subscriptions %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Plan</th>
+                        <th>Status</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subscription in subscriptions %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ subscription.plan.name }}</td>
+                            <td>{{ subscription.get_status_display }}</td>
+                            <td>{{ subscription.start_date|date:"Y-m-d" }}</td>
+                            <td>{{ subscription.end_date|date:"Y-m-d" }}</td>
+                            <td>
+                                {% if subscription.status == "active" %}
+                                    <form method="post" action="{% url 'cancel_subscription' subscription.id %}">
+                                        {% csrf_token %}
+                                        <button class="btn btn-danger btn-sm">Cancel</button>
+                                    </form>
+                                {% else %}
+                                    <span class="text-muted">No Actions</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="text-muted">You have no subscriptions yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

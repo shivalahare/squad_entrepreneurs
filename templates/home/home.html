@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - SubscriptionPro{% endblock %}
+
+{% block content %}
+<div class="text-center py-5 bg-light rounded">
+    <h1 class="display-4">Welcome to SubscriptionPro</h1>
+    <p class="lead">Discover our premium subscription services tailored for you</p>
+    <a href="{% url 'plans' %}" class="btn btn-primary btn-lg">View Our Plans</a>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Premium Quality</h5>
+                <p class="card-text">Experience top-tier services with our premium subscriptions.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Flexible Plans</h5>
+                <p class="card-text">Choose from various plans that suit your needs and budget.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">24/7 Support</h5>
+                <p class="card-text">Get assistance anytime with our dedicated support team.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

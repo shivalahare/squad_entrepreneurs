@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #f8f9fa; padding: 20px; text-align: center; }
+        .content { padding: 20px; }
+        .button { display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Subscription Renewal Reminder</h2>
+        </div>
+        <div class="content">
+            <p>Dear {{ user.get_full_name|default:user.email }},</p>
+            
+            <p>Your subscription to {{ subscription.plan.name }} is due for renewal on {{ subscription.end_date|date }}.</p>
+            
+            <p>Subscription Details:</p>
+            <ul>
+                <li>Plan: {{ subscription.plan.name }}</li>
+                <li>Price: ${{ subscription.plan.price }}</li>
+                <li>Renewal Date: {{ subscription.end_date|date }}</li>
+            </ul>
+            
+            <p>To ensure uninterrupted service, please ensure your payment method is up to date.</p>
+            
+            <p style="text-align: center; margin-top: 30px;">
+                <a href="{{ site_url }}{% url 'subscription_settings' %}" class="button">Manage Subscription</a>
+            </p>
+            
+            <p>If you have any questions, please don't hesitate to contact our support team.</p>
+            
+            <p>Best regards,<br>SubscriptionPro Team</p>
+        </div>
+    </div>
+</body>
+</html>

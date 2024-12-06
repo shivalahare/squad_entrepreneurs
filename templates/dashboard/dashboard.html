@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - SubscriptionPro{% endblock %}
+
+{% block extra_css %}
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+<style>
+    .card {
+        box-shadow: 0 20px 27px 0 rgb(0 0 0 / 5%);
+    }
+    
+   
+    .table-nowrap .table td,
+    .table-nowrap .table th {
+        white-space: nowrap;
+    }
+    
+    .table>:not(caption)>*>* {
+        padding: 0.75rem 1.25rem;
+        border-bottom-width: 1px;
+    }
+    
+    table th {
+        font-weight: 600;
+        background-color: #eeecfd !important;
+    }
+    
+    .fa-arrow-up {
+        color: #00CED1;
+    }
+    
+    .fa-arrow-down {
+        color: #FF00FF;
+    }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1>Welcome, {{ user.get_full_name|default:user.email }}</h1>
+        </div>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h6 class="card-title">Active Subscriptions</h6>
+                    <h2 class="mb-0">{{ metrics.total_active }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h6 class="card-title">Monthly Spend</h6>
+                    <h2 class="mb-0">${{ metrics.monthly_spend }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h6 class="card-title">Member Since</h6>
+                    <h2 class="mb-0">{{ user.date_joined|date:"M Y" }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h6 class="card-title">Next Payment</h6>
+                    <h2 class="mb-0">{{ active_subscription.end_date|date:"M d" }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <!-- Subscription Status -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Current Subscription</h5>
+                    {% if active_subscription %}
+                    <a href="{% url 'subscription_settings' %}" class="btn btn-sm btn-primary">Manage</a>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {% if active_subscription %}
+                        <div class="d-flex align-items-center mb-3">
+                            <h4 class="mb-0">{{ active_subscription.plan.name }}</h4>
+                            <span class="badge bg-success ms-2">{{ active_subscription.status }}</span>
+                        </div>
+                        <p class="mb-2">Valid until: {{ active_subscription.end_date|date }}</p>
+                        <div class="progress mb-3">
+                            <div class="progress-bar" role="progressbar" style="width: 75%"></div>
+                        </div>
+                        <h6>Features:</h6>
+                        <ul class="list-unstyled">
+                            {% for feature in active_subscription.plan.features %}
+                            <li><i class="fas fa-check text-success me-2"></i>{{ feature }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No active subscription</p>
+                        <a href="{% url 'plans' %}" class="btn btn-primary">View Plans</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Analytics -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Payment Analytics</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="paymentChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mb-3 mb-lg-5">
+            <div class="position-relative card table-nowrap table-card">
+                <div class="card-header align-items-center">
+                    <h5 class="mb-0">Latest Transactions</h5>
+                    <p class="mb-0 small text-muted">1 Pending</p>
+                </div>
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead class="small text-uppercase bg-body text-muted">
+                            <tr>
+                                <th>Transaction ID</th>
+                                <th>Date</th>
+                                <th>Subscription</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for payment in payment_history %}
+                            <tr class="align-middle">
+                                <td>
+                                    #57473829
+                                </td>
+                                <td>{{ payment.created_at }}</td>
+                                <td>{{ payment.subscription.plan.name }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <span><i class="fa fa-arrow-up" aria-hidden="true"></i></span>
+                                        <span>₹{{ payment.amount }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge fs-6 fw-normal bg-tint-success text-success">{{ payment.status }}</span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center">No Recent Transactions</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer text-end">
+                    <a href="#!" class="btn btn-gray">View All Transactions</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mb-3 mb-lg-5">
+            <div class="position-relative card table-nowrap table-card">
+                <div class="card-header align-items-center">
+                    <h5 class="mb-0">Recent Activity</h5>
+                    <p class="mb-0 small text-muted">1 Pending</p>
+                </div>
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead class="small text-uppercase bg-body text-muted">
+                            <tr>
+                                <th>Date</th>
+                                <th>Action</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for activity in recent_activity %}
+                            <tr class="align-middle">
+                                <td>{{ activity.created_at|date:"M d, Y H:i" }}</td>
+                                <td>{{ activity.action }}</td>
+                                <td>{{ activity.details|default:"-" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center">No recent activity</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer text-end">
+                    <a href="{% url 'activity_log' %}" class="btn btn-gray">View All</a>
+                </div>
+            </div>
+        </div>
+{% endblock %}
+
+{% block extra_js %}
+{% comment %} <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script> {% endcomment %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('paymentChart').getContext('2d');
+
+    // Data passed from Django
+    const labels = {{ payment_analytics.dates|safe }}; // List of dates
+    const data = {{ payment_analytics.totals|safe }}; // Corresponding payment totals
+
+    new Chart(ctx, {
+        type: 'line', // Change to other types like 'bar' or 'pie'
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Total Payments',
+                data: data,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderWidth: 2,
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date',
+                    },
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Total Payments (INR)',
+                    },
+                    beginAtZero: true,
+                },
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+            },
+        },
+    });
+</script>
+{% endblock %}

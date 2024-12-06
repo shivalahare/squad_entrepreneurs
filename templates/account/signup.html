@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Sign Up - SubscriptionPro{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="text-center mb-4">Sign Up</h2>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        
+                        <div class="mb-3">
+                            <label for="referral_code" class="form-label">Referral Code (Optional)</label>
+                            <input type="text" name="referral_code" id="referral_code" class="form-control">
+                            <div class="form-text">If you have a referral code, enter it here.</div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+                    </form>
+                    
+                    <p class="text-center mt-3">
+                        Already have an account? <a href="{% url 'account_login' %}">Log In</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

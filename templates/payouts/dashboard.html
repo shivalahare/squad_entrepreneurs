@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payout Dashboard - SubscriptionPro{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1>Payout Dashboard</h1>
+        </div>
+    </div>
+
+    <!-- Balance Card -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="card-title">Available Balance</h5>
+                    <h2 class="text-success">${{ available_balance }}</h2>
+                </div>
+                <div class="col-md-6 text-end">
+                    <a href="{% url 'request_withdrawal' %}" class="btn btn-primary">Request Withdrawal</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Withdrawal Policy -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Withdrawal Policy</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <p><strong>Minimum Amount:</strong></p>
+                    <p>${{ withdrawal_policy.min_amount }}</p>
+                </div>
+                <div class="col-md-3">
+                    <p><strong>Maximum Amount:</strong></p>
+                    <p>${{ withdrawal_policy.max_amount }}</p>
+                </div>
+                <div class="col-md-3">
+                    <p><strong>Processing Time:</strong></p>
+                    <p>{{ withdrawal_policy.processing_time_days }} days</p>
+                </div>
+                <div class="col-md-3">
+                    <p><strong>Withdrawal Fee:</strong></p>
+                    <p>${{ withdrawal_policy.withdrawal_fee }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Methods -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Payment Methods</h5>
+            <a href="{% url 'add_payment_method' %}" class="btn btn-sm btn-primary">Add New</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Details</th>
+                            <th>Added Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for method in payment_methods %}
+                        <tr>
+                            <td>{{ method.get_payment_type_display }}</td>
+                            <td>{{ method.account_details }}</td>
+                            <td>{{ method.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                {% if method.is_default %}
+                                <span class="badge bg-success">Default</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Active</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">No payment methods added</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Withdrawal History -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Withdrawal History</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Payment Method</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for withdrawal in withdrawal_requests %}
+                        <tr>
+                            <td>{{ withdrawal.created_at|date:"M d, Y" }}</td>
+                            <td>${{ withdrawal.amount }}</td>
+                            <td>{{ withdrawal.payment_method.get_payment_type_display }}</td>
+                            <td>
+                                <span class="badge bg-{{ withdrawal.status|yesno:'success,warning' }}">
+                                    {{ withdrawal.status }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if withdrawal.can_be_cancelled %}
+                                <form method="post" action="{% url 'cancel_withdrawal' withdrawal.id %}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-danger" 
+                                            onclick="return confirm('Are you sure you want to cancel this withdrawal request?')">
+                                        Cancel
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">No withdrawal history</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
