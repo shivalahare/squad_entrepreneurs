@@ -21,7 +21,8 @@ def create_referral_profile(sender, instance, created, **kwargs):
             referral_code = request.GET.get('ref')
             try:
                 referrer_profile = ReferralProfile.objects.get(referral_code=referral_code)
-                referral_profile.referred_by = referrer_profile.user
-                referral_profile.save()
+                user_profile = ReferralProfile.objects.get(user=request.user)
+                user_profile.referred_by = referrer_profile.user
+                user_profile.save()
             except ReferralProfile.DoesNotExist:
                 pass  # If the referral code is invalid, do nothing
