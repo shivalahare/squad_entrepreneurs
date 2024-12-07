@@ -12,4 +12,5 @@ urlpatterns = [
     path('referrals/', include('referrals.urls')),
     path('payments/', include('payments.urls')),
     path('payouts/', include('payouts.urls')),
+    path('users/', include('users.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

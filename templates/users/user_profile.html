@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Profile Section -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-body text-center">
+                    <div class="d-flex flex-column align-items-center">
+                        <img src="https://via.placeholder.com/150" 
+                             alt="User Avatar" 
+                             class="rounded-circle img-thumbnail mb-3" 
+                             style="width: 150px; height: 150px;">
+                        <h3 class="card-title">{{ user.get_full_name }}</h3>
+                        <p class="text-muted">@{{ user.username }}</p>
+                        <a href="{% url 'update_profile' %}" class="btn btn-sm btn-warning">
+                            <i class="bi bi-pencil"></i> Edit Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Personal Details Section -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Personal Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p><strong>Email:</strong> {{ user.email }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            {% if user.userprofile and user.userprofile.phone %}
+                            <p><strong>Phone:</strong> {{ user.userprofile.phone }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>First Name:</strong> {{ user.first_name }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Last Name:</strong> {{ user.last_name }}</p>
+                        </div>
+                        <div class="col-12">
+                            {% if user.userprofile and user.userprofile.address %}
+                            <p><strong>Address:</strong> {{ user.userprofile.address }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subscription Details Section -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Subscription Details</h5>
+                </div>
+                <div class="card-body">
+                    {% if user.subscription_set.exists %}
+                        <ul class="list-group">
+                            {% for subscription in user.subscription_set.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ subscription.plan.name }}
+                                <span class="badge bg-primary">Active</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">You have no active subscriptions.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Log Section -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Recent Activity</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        {% if user.activitylog_set.exists %}
+                            {% for activity in user.activitylog_set.all|slice:":5" %}
+                            <li class="list-group-item">
+                                {{ activity.description }} - <small class="text-muted">{{ activity.timestamp }}</small>
+                            </li>
+                            {% endfor %}
+                        {% else %}
+                            <li class="list-group-item">No recent activity found.</li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
