@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Sum
+from decimal import Decimal
 from django.utils import timezone
 from datetime import timedelta
 from .models import ReferralProfile, ReferralEarning
@@ -11,12 +12,21 @@ def generate_referral_link(user):
     # Assuming the user has a UserProfile with a referral_code
     return f"http://127.0.0.1:8000/accounts/signup/?ref={user.referralprofile.referral_code}"
 
+def calculate_commission(self, payment_amount):
+        """Calculate commission for a referred user's payment"""
+        return (Decimal(payment_amount) * Decimal('0.001')).quantize(Decimal('0.01'))  # 0.1%
+
 @login_required
 def referral_dashboard(request):
     user = request.user
     referral_profile = ReferralProfile.objects.get(user=user)
     
+    # Update total earnings
+    # referral_profile.update_total_earnings()
+    
+    # Generate referral link
     referral_link = generate_referral_link(request.user)
+
     # Get referral statistics
     total_referrals = ReferralProfile.objects.filter(referred_by=request.user).count()
     
@@ -27,7 +37,7 @@ def referral_dashboard(request):
     monthly_earnings = ReferralEarning.objects.filter(
         referrer=request.user,
         created_at__gte=thirty_days_ago
-    ).aggregate(total=Sum('amount'))['total'] or 0
+    ).aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
     
     # Get recent earnings
     recent_earnings = ReferralEarning.objects.filter(
@@ -56,9 +66,10 @@ def apply_referral(request):
         try:
             referrer_profile = ReferralProfile.objects.get(referral_code=referral_code)
             user_profile = ReferralProfile.objects.get(user=request.user)
-            user_profile.referred_by = referrer_profile.user
-            user_profile.save()
-            messages.success(request, 'Referral code applied successfully!')
+            if not user_profile.referred_by:  # Prevent overwriting existing referral
+                user_profile.referred_by = referrer_profile.user
+                user_profile.save()
+                messages.success(request, 'Referral code applied successfully!')
         except ReferralProfile.DoesNotExist:
             messages.error(request, 'Invalid referral code.')
-    return redirect('dashboard')
+    return redirect('referral_dashboard')

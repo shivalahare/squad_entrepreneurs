@@ -75,51 +75,6 @@ def payment_page(request, order_id):
         },
     )
 
-# def payment_page(request, order_id):
-#     """
-#     Display the payment page with the UPI QR Code and handle the payment ID submission.
-#     """
-#     # Get the subscription details based on the order ID
-#     subscription = get_object_or_404(Subscription, order_id=order_id)
-
-#     # Generate the UPI QR Code dynamically
-#     upi_id = "your_upi_id@bank"  # Replace with your actual UPI ID
-#     upi_string = f"upi://pay?pa={upi_id}&pn=Your+Business+Name&am={subscription.plan.price}&cu=INR"
-    
-#     qr = qrcode.QRCode(version=1, box_size=10, border=5)
-#     qr.add_data(upi_string)
-#     qr.make(fit=True)
-#     qr_image = qr.make_image(fill="black", back_color="white")
-
-#     # Convert the QR code image to a format usable in the template
-#     buffer = BytesIO()
-#     qr_image.save(buffer, format="PNG")
-#     qr_code_data = base64.b64encode(buffer.getvalue()).decode("utf-8")
-
-
-#     # Handle form submission for payment ID
-#     if request.method == "POST":
-#         payment_id = request.POST.get("payment_id")
-        
-#         # Assuming you would verify the payment ID here (replace with actual verification)
-#         if payment_id:  # Add actual payment verification logic here
-#             # Update subscription to active if payment is successful
-#             subscription.is_active = True  # Mark the subscription as active after successful payment
-#             subscription.payment_id = payment_id  # Save the payment ID
-#             subscription.save()
-#             # Redirect to the subscription list or a success page
-#             return redirect("subscription_list")  # Replace with your success page URL or subscription list URL
-
-#     # Render the payment page
-#     return render(
-#         request,
-#         "payments/payment_page.html",
-#         {
-#             "subscription": subscription,
-#             "qr_code_data": qr_code_data,
-#             "upi_id": upi_id,
-#         },
-#     )
 
 @csrf_exempt
 def razorpay_webhook(request):

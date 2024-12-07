@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from decimal import Decimal
+from django.db.models import Sum
 import uuid
 
 class ReferralProfile(models.Model):
@@ -20,8 +21,26 @@ class ReferralProfile(models.Model):
         return f"{self.user.email}'s Referral Profile"
 
     def calculate_commission(self, payment_amount):
-        """Calculate commission for a referred user's payment"""
-        return (Decimal(payment_amount) * Decimal('0.001')).quantize(Decimal('0.01'))  # 0.1%
+        try:
+            commission = (Decimal(payment_amount) * Decimal('0.001')).quantize(Decimal('0.01'))
+            print(f"Calculated commission: {commission} for payment amount: {payment_amount}")
+            return commission
+        except Exception as e:
+            print("Error calculating commission:", e)
+            return Decimal('0.00')    
+
+
+
+
+    # def calculate_commission(self, payment_amount):
+    #     """Calculate commission for a referred user's payment"""
+    #     return (Decimal(payment_amount) * Decimal('0.001')).quantize(Decimal('0.01'))  # 0.1%
+    
+    # def update_total_earnings(self):
+    #     """Recalculate and update total earnings."""
+    #     earnings = ReferralEarning.objects.filter(referrer=self.user).aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
+    #     self.total_earnings = earnings
+    #     self.save()
 
 class ReferralEarning(models.Model):
     referrer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='referral_earnings')
