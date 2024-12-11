@@ -60,7 +60,7 @@
             <div class="card bg-success text-white">
                 <div class="card-body">
                     <h6 class="card-title">Monthly Spend</h6>
-                    <h2 class="mb-0">${{ metrics.monthly_spend }}</h2>
+                    <h2 class="mb-0">₹{{ metrics.monthly_spend }}</h2>
                 </div>
             </div>
         </div>
@@ -76,7 +76,7 @@
             <div class="card bg-warning text-white">
                 <div class="card-body">
                     <h6 class="card-title">Next Payment</h6>
-                    <h2 class="mb-0">{{ active_subscription.end_date|date:"M d" }}</h2>
+                    <h2 class="mb-0">{{ active_subscription_date|date:"M d" }}</h2>
                 </div>
             </div>
         </div>

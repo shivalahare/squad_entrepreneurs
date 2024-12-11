@@ -37,7 +37,7 @@
             <div class="card bg-success text-white">
                 <div class="card-body">
                     <h6 class="card-title">Monthly Earnings</h6>
-                    <h2 class="mb-0">${{ monthly_earnings }}</h2>
+                    <h2 class="mb-0">₹{{ monthly_earnings }}</h2>
                 </div>
             </div>
         </div>
@@ -45,7 +45,7 @@
             <div class="card bg-info text-white">
                 <div class="card-body">
                     <h6 class="card-title">Total Earnings</h6>
-                    <h2 class="mb-0">${{ referral_profile.total_earnings }}</h2>
+                    <h2 class="mb-0">₹{{ referral_profile.total_earnings }}</h2>
                 </div>
             </div>
         </div>
@@ -72,8 +72,8 @@
                         <tr>
                             <td>{{ earning.created_at|date:"M d, Y" }}</td>
                             <td>{{ earning.referred_user.email }}</td>
-                            <td>${{ earning.payment.amount }}</td>
-                            <td>${{ earning.amount }}</td>
+                            <td>₹{{ earning.payment.amount }}</td>
+                            <td>₹{{ earning.amount }}</td>
                         </tr>
                         {% empty %}
                         <tr>

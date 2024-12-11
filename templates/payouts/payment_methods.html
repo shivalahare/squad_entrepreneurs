@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Payment Methods</h2>
+
+    <div class="row">
+        {% for method in payment_methods %}
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ method.get_payment_type_display }}</h5>
+                    
+                    <p class="card-text">
+                        {% if method.payment_type == 'paypal' %}
+                            <strong>Email:</strong> {{ method.account_details.email }}
+                        {% elif method.payment_type == 'bank_transfer' %}
+                            <strong>Bank Name:</strong> {{ method.account_details.bank_name }}<br>
+                            <strong>IFSC Code:</strong> {{ method.account_details.ifsc_code }}<br>
+                            <strong>Account Number:</strong> {{ method.account_details.account_number }}
+                        {% elif method.payment_type == 'crypto' %}
+                            <strong>Wallet Address:</strong> {{ method.account_details.wallet_address }}<br>
+                            <strong>Cryptocurrency Type:</strong> {{ method.account_details.crypto_type }}
+                        {% else %}
+                            <em>No details available.</em>
+                        {% endif %}
+                    </p>
+
+                    {% if method.is_default %}
+                        <span class="badge bg-success">Default</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

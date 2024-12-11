@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_filters %}
 
 {% block title %}Payout Dashboard - SubscriptionPro{% endblock %}
 
@@ -17,7 +18,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <h5 class="card-title">Available Balance</h5>
-                    <h2 class="text-success">${{ available_balance }}</h2>
+                    <h2 class="text-success">₹{{ available_balance }}</h2>
                 </div>
                 <div class="col-md-6 text-end">
                     <a href="{% url 'request_withdrawal' %}" class="btn btn-primary">Request Withdrawal</a>
@@ -35,11 +36,11 @@
             <div class="row">
                 <div class="col-md-3">
                     <p><strong>Minimum Amount:</strong></p>
-                    <p>${{ withdrawal_policy.min_amount }}</p>
+                    <p>₹{{ withdrawal_policy.min_amount }}</p>
                 </div>
                 <div class="col-md-3">
                     <p><strong>Maximum Amount:</strong></p>
-                    <p>${{ withdrawal_policy.max_amount }}</p>
+                    <p>₹{{ withdrawal_policy.max_amount }}</p>
                 </div>
                 <div class="col-md-3">
                     <p><strong>Processing Time:</strong></p>
@@ -47,7 +48,7 @@
                 </div>
                 <div class="col-md-3">
                     <p><strong>Withdrawal Fee:</strong></p>
-                    <p>${{ withdrawal_policy.withdrawal_fee }}</p>
+                    <p>₹{{ withdrawal_policy.withdrawal_fee }}</p>
                 </div>
             </div>
         </div>
@@ -64,23 +65,34 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Type</th>
+                            <th>Payment Type</th>
                             <th>Details</th>
                             <th>Added Date</th>
-                            <th>Status</th>
+                            <th class="text-center">Is Default</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for method in payment_methods %}
                         <tr>
-                            <td>{{ method.get_payment_type_display }}</td>
-                            <td>{{ method.account_details }}</td>
-                            <td>{{ method.created_at|date:"M d, Y" }}</td>
+                            <td class="align-middle">{{ method.get_payment_type_display }}</td>
                             <td>
+                                <table class="table table-sm table-borderless mb-0">
+                                    <tbody>
+                                        {% for key, value in method.account_details.items %}
+                                        <tr>
+                                            <td><strong>{{ key|replace }}</strong></td>
+                                            <td>{{ value }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </td>
+                            <td class="align-middle">{{ method.created_at|date:"M d, Y" }}</td>
+                            <td class="align-middle text-center">
                                 {% if method.is_default %}
-                                <span class="badge bg-success">Default</span>
+                                    <span class="badge bg-success">Yes</span>
                                 {% else %}
-                                <span class="badge bg-secondary">Active</span>
+                                    <span class="badge bg-secondary">No</span>
                                 {% endif %}
                             </td>
                         </tr>
@@ -90,7 +102,7 @@
                         </tr>
                         {% endfor %}
                     </tbody>
-                </table>
+                </table>                
             </div>
         </div>
     </div>
@@ -109,6 +121,7 @@
                             <th>Amount</th>
                             <th>Payment Method</th>
                             <th>Status</th>
+                            <th>Referrence</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -116,13 +129,14 @@
                         {% for withdrawal in withdrawal_requests %}
                         <tr>
                             <td>{{ withdrawal.created_at|date:"M d, Y" }}</td>
-                            <td>${{ withdrawal.amount }}</td>
+                            <td>₹{{ withdrawal.amount }}</td>
                             <td>{{ withdrawal.payment_method.get_payment_type_display }}</td>
                             <td>
                                 <span class="badge bg-{{ withdrawal.status|yesno:'success,warning' }}">
                                     {{ withdrawal.status }}
                                 </span>
                             </td>
+                            <td>{{ withdrawal.reference_id }}</td>
                             <td>
                                 {% if withdrawal.can_be_cancelled %}
                                 <form method="post" action="{% url 'cancel_withdrawal' withdrawal.id %}" style="display: inline;">

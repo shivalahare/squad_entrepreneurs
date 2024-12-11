@@ -6,11 +6,12 @@ from decimal import Decimal
 from django.utils import timezone
 from datetime import timedelta
 from .models import ReferralProfile, ReferralEarning
-
+from django.conf import settings
 
 def generate_referral_link(user):
+    site_domain = settings.CSRF_TRUSTED_ORIGINS[0]
     # Assuming the user has a UserProfile with a referral_code
-    return f"http://127.0.0.1:8000/accounts/signup/?ref={user.referralprofile.referral_code}"
+    return f"{site_domain}/accounts/signup/?ref={user.referralprofile.referral_code}"
 
 def calculate_commission(self, payment_amount):
         """Calculate commission for a referred user's payment"""

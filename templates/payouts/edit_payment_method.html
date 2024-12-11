@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}Edit Payment Method{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white text-center">
+                <h4>Edit Payment Method</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button type="submit" class="btn btn-primary w-100">Update Payment Method</button>
+                </form>
+            </div>
+        </div>
+        <div class="mt-3 text-center">
+            <a href="{% url 'payout_dashboard' %}" class="btn btn-link">Back to Payment Methods</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -13,7 +13,7 @@ from .utils.analytics import get_subscription_metrics, get_payment_analytics
 from subscriptions.models import Subscription
 from payments.models import Payment
 from allauth.account.models import EmailAddress
-
+from datetime import date
 # @login_required
 # def resend_verification(request):
 #     if request.method == 'POST':
@@ -38,6 +38,9 @@ def dashboard(request):
         user=request.user,
         status='active'
     ).first()
+
+    # Default to today's date if no active subscription
+    active_subscription_date = active_subscription.end_date if active_subscription else date.today()
     
     # Get recent payments
     payment_history = Payment.objects.filter(
@@ -54,6 +57,7 @@ def dashboard(request):
     
     context = {
         'active_subscription': active_subscription,
+        'active_subscription_date' : active_subscription_date,
         'payment_history': payment_history,
         'metrics': metrics,
         'payment_analytics': payment_analytics,

@@ -7,6 +7,8 @@ from django.core.exceptions import ValidationError
 from .models import PaymentMethod, WithdrawalRequest, WithdrawalPolicy
 from referrals.models import ReferralProfile
 from .forms import PaymentMethodForm, WithdrawalRequestForm
+from django.http import JsonResponse
+import json
 
 @login_required
 def payout_dashboard(request):
@@ -24,19 +26,76 @@ def payout_dashboard(request):
     return render(request, 'payouts/dashboard.html', context)
 
 @login_required
+def payment_methods(request):
+    payment_methods = PaymentMethod.objects.all()
+    return render(request, "payouts/payment_methods.html", {"payment_methods": payment_methods})
+
+
+@login_required
 def add_payment_method(request):
     if request.method == 'POST':
+        print("POST Data:", request.POST) 
         form = PaymentMethodForm(request.POST)
         if form.is_valid():
+            print("Cleaned Data:", form.cleaned_data)
             payment_method = form.save(commit=False)
             payment_method.user = request.user
             payment_method.save()
-            messages.success(request, 'Payment method added successfully!')
-            return redirect('payout_dashboard')
+            return redirect('payout_dashboard')  # Or wherever you want to redirect
     else:
         form = PaymentMethodForm()
-    
+
     return render(request, 'payouts/add_payment_method.html', {'form': form})
+
+
+
+# def add_payment_method(request):
+#     if request.method == 'POST':
+#         form = PaymentMethodForm(request.POST)
+#         if form.is_valid():
+#             payment_method = form.save(commit=False)
+#             payment_method.user = request.user
+#             payment_method.save()
+#             messages.success(request, 'Payment method added successfully!')
+#             return redirect('payout_dashboard')
+#     else:
+#         form = PaymentMethodForm()
+    
+#     return render(request, 'payouts/add_payment_method.html', {'form': form})
+
+
+@login_required
+def edit_payment_method(request, pk):
+    payment_method = get_object_or_404(PaymentMethod, pk=pk, user=request.user)
+    if request.method == 'POST':
+        form = PaymentMethodForm(request.POST, instance=payment_method)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Payment method updated successfully!")
+            return redirect('payout_dashboard')
+        else:
+            messages.error(request, "There were errors in the form. Please correct them.")
+    else:
+        form = PaymentMethodForm(instance=payment_method)
+    
+    context = {
+        'form': form,
+    }
+    return render(request, 'payouts/edit_payment_method.html', context)
+
+@login_required
+def delete_payment_method(request, pk):
+    payment_method = get_object_or_404(PaymentMethod, pk=pk, user=request.user)
+    if request.method == 'POST':
+        payment_method.delete()
+        messages.success(request, "Payment method deleted successfully!")
+        return redirect('payout_dashboard')
+    
+    context = {
+        'payment_method': payment_method,
+    }
+    return render(request, 'payouts/confirm_delete.html', context)
+
 
 @login_required
 @transaction.atomic

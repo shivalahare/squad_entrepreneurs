@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from decimal import Decimal
 
+
 class PaymentMethod(models.Model):
     PAYMENT_TYPES = [
         ('paypal', 'PayPal'),
@@ -15,11 +16,10 @@ class PaymentMethod(models.Model):
     is_default = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     
-    class Meta:
-        unique_together = ['user', 'payment_type', 'account_details']
     
     def __str__(self):
         return f"{self.user.email} - {self.payment_type}"
+
 
 class WithdrawalRequest(models.Model):
     STATUS_CHOICES = [

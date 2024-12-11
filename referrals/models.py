@@ -23,10 +23,8 @@ class ReferralProfile(models.Model):
     def calculate_commission(self, payment_amount):
         try:
             commission = (Decimal(payment_amount) * Decimal('0.001')).quantize(Decimal('0.01'))
-            print(f"Calculated commission: {commission} for payment amount: {payment_amount}")
             return commission
-        except Exception as e:
-            print("Error calculating commission:", e)
+        except Exception :
             return Decimal('0.00')    
 
 
