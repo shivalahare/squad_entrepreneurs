@@ -11,6 +11,7 @@
         </div>
     </div>
 
+    <!-- Subscription Cards -->
     {% for subscription in subscriptions %}
     <div class="card mb-4">
         <div class="card-header">
@@ -56,5 +57,56 @@
         You don't have any subscriptions yet. <a href="{% url 'plans' %}">View our plans</a> to get started.
     </div>
     {% endfor %}
+
+    <!-- Preferences Section -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Preferences</h5>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-check">
+                    <input 
+                        class="form-check-input" 
+                        type="checkbox" 
+                        id="email_notifications" 
+                        name="email_notifications" 
+                        {% if preferences.email_notifications %}checked{% endif %}
+                    >
+                    <label class="form-check-label" for="email_notifications">
+                        Email Notifications
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input 
+                        class="form-check-input" 
+                        type="checkbox" 
+                        id="renewal_reminders" 
+                        name="renewal_reminders" 
+                        {% if preferences.renewal_reminders %}checked{% endif %}
+                    >
+                    <label class="form-check-label" for="renewal_reminders">
+                        Renewal Reminders
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input 
+                        class="form-check-input" 
+                        type="checkbox" 
+                        id="newsletter_subscription" 
+                        name="newsletter_subscription" 
+                        {% if preferences.newsletter_subscription %}checked{% endif %}
+                    >
+                    <label class="form-check-label" for="newsletter_subscription">
+                        Newsletter Subscription
+                    </label>
+                </div>
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">Update Preferences</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 {% endblock %}

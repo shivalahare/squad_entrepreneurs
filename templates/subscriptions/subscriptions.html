@@ -30,7 +30,8 @@
                                 {% if subscription.status == "active" %}
                                     <form method="post" action="{% url 'cancel_subscription' subscription.id %}">
                                         {% csrf_token %}
-                                        <button class="btn btn-danger btn-sm">Cancel</button>
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                            onclick="return confirm('Are you sure you want to cancel this subscription?')">Cancel</button>
                                     </form>
                                 {% else %}
                                     <span class="text-muted">No Actions</span>

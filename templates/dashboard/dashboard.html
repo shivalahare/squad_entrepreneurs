@@ -148,7 +148,7 @@
                             {% for payment in payment_history %}
                             <tr class="align-middle">
                                 <td>
-                                    #57473829
+                                   {{ payment.payment_id }}
                                 </td>
                                 <td>{{ payment.created_at }}</td>
                                 <td>{{ payment.subscription.plan.name }}</td>
