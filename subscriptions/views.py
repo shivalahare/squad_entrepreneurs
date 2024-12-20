@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.contrib import messages
-from .models import Plan , Subscription
+from .models import Plan , Subscription ,Content
 from django.utils.timezone import now
 import uuid
 
@@ -65,3 +65,16 @@ def cancel_subscription(request, subscription_id):
         subscription.cancel()
         return redirect("subscription_list")
     return render(request, "subscriptions/confirm_cancel.html", {"subscription": subscription})
+
+@login_required
+def educational_content(request):
+    videos = Content.objects.filter(content_type='video')
+    books = Content.objects.filter(content_type='book')
+    pdfs = Content.objects.filter(content_type='pdf')
+
+    context = {
+        'videos': videos,
+        'books': books,
+        'pdfs': pdfs,
+    }
+    return render(request, 'subscriptions/content_page.html', context)

@@ -4,6 +4,36 @@ from django.utils import timezone
 import datetime
 from django.conf import settings
 
+
+class Content(models.Model):
+    TYPE_CHOICES = [
+        ('video', 'Video'),
+        ('book', 'Book'),
+        ('pdf', 'PDF'),
+    ]
+
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    content_type = models.CharField(max_length=10, choices=TYPE_CHOICES)
+    # url = models.URLField(blank=True, null=True)  # For videos or online resources
+    file = models.FileField(upload_to='uploads/', blank=True, null=True)  # For PDFs or books
+    video_file = models.FileField(upload_to='videos/', blank=True, null=True)
+    video_thumbnail = models.FileField(upload_to='images/thumbnail/', blank=True, null=True)
+
+    def __str__(self):
+        return self.title
+
+
+class Course(models.Model):
+    title = models.CharField(max_length=100)
+    plans = models.ManyToManyField('Plan')
+
+    class Meta:
+        ordering = ["title"]
+
+    def __str__(self):
+        return self.title
+
 class Plan(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)

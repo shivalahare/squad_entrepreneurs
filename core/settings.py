@@ -18,14 +18,18 @@ STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '')
 STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', '')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://127.0.0.1:8000",
+    'https://shivalahare-django--8000.prod1a.defang.dev',
 ]
 
+if DEBUG:
+    CSRF_TRUSTED_ORIGINS = [
+        'http://localhost:8000',
+    ]
 # Application definition
 
 INSTALLED_APPS = [
