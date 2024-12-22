@@ -31,15 +31,7 @@ def referral_dashboard(request):
     # Get referral statistics
     total_referrals = ReferralProfile.objects.filter(referred_by=request.user).count()
     
-    # Get earnings for different time periods
-    now = timezone.now()
-    thirty_days_ago = now - timedelta(days=30)
-    
-    monthly_earnings = ReferralEarning.objects.filter(
-        referrer=request.user,
-        created_at__gte=thirty_days_ago
-    ).aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
-    
+
     # Get recent earnings
     recent_earnings = ReferralEarning.objects.filter(
         referrer=request.user
@@ -53,7 +45,10 @@ def referral_dashboard(request):
     context = {
         'referral_profile': referral_profile,
         'total_referrals': total_referrals,
-        'monthly_earnings': monthly_earnings,
+        'total_earnings': referral_profile.total_earnings,
+        'todays_earnings': referral_profile.todays_earnings,
+        'weekly_earnings': referral_profile.weekly_earnings,
+        'monthly_earnings': referral_profile.monthly_earnings,
         'recent_earnings': recent_earnings,
         'referred_users': referred_users,
         'referral_link': referral_link,
