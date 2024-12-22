@@ -22,42 +22,34 @@
             <p class="mb-0">Share this code with others and earn 0.1% of their purchases!</p>
         </div>
     </div>
+
     <!-- Quick Stats Cards -->
     <div class="row mb-4">
-        <div class="col-md-3 mt-1">
+        <div class="col-md-4">
             <div class="card bg-primary text-white">
                 <div class="card-body">
-                    <h6 class="card-title">Today's Earnings</h6>
-                    <h2 class="mb-0">₹{{ todays_earnings }}</h2>
+                    <h6 class="card-title">Total Referrals</h6>
+                    <h2 class="mb-0">{{ total_referrals }}</h2>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mt-1">
-            <div class="card bg-warning text-white">
-                <div class="card-body">
-                    <h6 class="card-title">Weekly Earnings</h6>
-                    <h2 class="mb-0">₹{{ weekly_earnings }}</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mt-1">
-            <div class="card bg-info text-white">
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
                 <div class="card-body">
                     <h6 class="card-title">Monthly Earnings</h6>
                     <h2 class="mb-0">₹{{ monthly_earnings }}</h2>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mt-1">
-            <div class="card bg-success text-white">
+        <div class="col-md-4">
+            <div class="card bg-info text-white">
                 <div class="card-body">
                     <h6 class="card-title">Total Earnings</h6>
-                    <h2 class="mb-0">₹{{ total_earnings }}</h2>
+                    <h2 class="mb-0">₹{{ referral_profile.total_earnings }}</h2>
                 </div>
             </div>
         </div>
     </div>
-
 
     <!-- Recent Earnings -->
     <div class="card mb-4">
